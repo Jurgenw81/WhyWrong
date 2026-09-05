@@ -1,10 +1,13 @@
 import { ArrowRight, BrainCircuit, CheckCircle2, LoaderCircle, RotateCcw, Sparkles } from "lucide-react";
 
-function Hypotheses({ items }) {
+function Hypotheses({ items, source }) {
   if (!items?.length) return null;
   return (
     <div className="hypotheses">
-      <span className="eyebrow">WORKING HYPOTHESES</span>
+      <div className="hypothesis-heading">
+        <span className="eyebrow">WORKING HYPOTHESES</span>
+        {source?.startsWith("openai:") && <span className="ai-badge">STRUCTURED AI</span>}
+      </div>
       {items.map((item) => (
         <div className="hypothesis" key={item.id}>
           <div className="hypothesis-line">
@@ -70,7 +73,7 @@ export default function LearningPanel({
               ))}
             </div>
           )}
-          <Hypotheses items={result?.hypotheses} />
+          <Hypotheses items={result?.hypotheses} source={result?.analysis_source} />
         </>
       )}
 
@@ -81,7 +84,7 @@ export default function LearningPanel({
             <Sparkles size={22} />
             <h1>{result.hypotheses[0].label}</h1>
           </div>
-          <Hypotheses items={result.hypotheses} />
+          <Hypotheses items={result.hypotheses} source={result.analysis_source} />
           <div className="micro-lesson">
             <span className="eyebrow">TARGETED REPAIR</span>
             <p>{result.lesson}</p>

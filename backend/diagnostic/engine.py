@@ -94,9 +94,55 @@ class DiagnosticEngine:
             OPTIMIZER_CONFUSION: optimizer_score / total,
             GRADIENT_MISUNDERSTANDING: gradient_score / total,
         }
-        hypotheses = self._make_hypotheses(probabilities)
-        probe = select_probe(probabilities, PROBES)
-        return Analysis(0.3, 0.55, hypotheses, NextAction.PROBE, probe)
+        return self.from_classification(
+            correctness=0.3,
+            reasoning_quality=0.55,
+            probabilities=probabilities,
+            source="deterministic",
+        )
+
+    def from_classification(
+        self,
+        *,
+        correctness: float,
+        reasoning_quality: float,
+        probabilities: dict[str, float],
+        evidence: dict[str, str] | None = None,
+        source: str,
+    ) -> Analysis:
+        if correctness >= 0.82:
+            return Analysis(
+                correctness,
+                reasoning_quality,
+                (),
+                NextAction.PASS,
+                source=source,
+            )
+
+        supported = {OPTIMIZER_CONFUSION, GRADIENT_MISUNDERSTANDING}
+        cleaned = {
+            key: max(0.0, value)
+            for key, value in probabilities.items()
+            if key in supported
+        }
+        for hypothesis_id in supported:
+            cleaned.setdefault(hypothesis_id, 0.0)
+        total = sum(cleaned.values())
+        if total <= 0:
+            cleaned = {key: 0.5 for key in supported}
+        else:
+            cleaned = {key: value / total for key, value in cleaned.items()}
+
+        hypotheses = self._make_hypotheses(cleaned, evidence)
+        probe = select_probe(cleaned, PROBES)
+        return Analysis(
+            correctness,
+            reasoning_quality,
+            hypotheses,
+            NextAction.PROBE,
+            probe,
+            source,
+        )
 
     def apply_probe(
         self, analysis: Analysis, answer: str
@@ -112,12 +158,15 @@ class DiagnosticEngine:
         return hypotheses, winner, MICRO_LESSONS[winner]
 
     @staticmethod
-    def _make_hypotheses(probabilities: dict[str, float]) -> tuple[Hypothesis, ...]:
+    def _make_hypotheses(
+        probabilities: dict[str, float],
+        custom_evidence: dict[str, str] | None = None,
+    ) -> tuple[Hypothesis, ...]:
         labels = {
             OPTIMIZER_CONFUSION: "Backpropagation / optimizer confusion",
             GRADIENT_MISUNDERSTANDING: "Gradient misunderstanding",
         }
-        evidence = {
+        default_evidence = {
             OPTIMIZER_CONFUSION: (
                 "The response may attribute parameter updates to backpropagation."
             ),
@@ -126,9 +175,13 @@ class DiagnosticEngine:
             ),
         }
         return tuple(
-            Hypothesis(key, labels[key], round(value, 4), evidence[key])
+            Hypothesis(
+                key,
+                labels[key],
+                round(value, 4),
+                (custom_evidence or {}).get(key, default_evidence[key]),
+            )
             for key, value in sorted(
                 probabilities.items(), key=lambda item: item[1], reverse=True
             )
         )
-

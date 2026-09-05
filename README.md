@@ -20,9 +20,10 @@ The diagnostic core currently:
 - returns a targeted micro-lesson;
 - updates concept mastery after a retry.
 
-The first implementation is deterministic and local. Its interfaces are built
-so an LLM classifier can be added later without giving the model control of the
-learning loop.
+The baseline is deterministic and local. With `OPENAI_API_KEY` configured, the
+backend uses OpenAI Structured Outputs for free-text assessment. Misconception
+IDs, probe selection, belief updates, and mastery remain application-controlled.
+If the API is unavailable, the demo falls back to the deterministic baseline.
 
 ## Run it
 
@@ -30,6 +31,13 @@ learning loop.
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
+
+# Optional: enable structured OpenAI classification
+cp .env.example .env
+# Add OPENAI_API_KEY to .env, then load it:
+set -a
+source .env
+set +a
 
 # Interactive terminal prototype
 python -m backend.cli

@@ -25,7 +25,8 @@ class ApiTests(unittest.IsolatedAsyncioTestCase):
     async def test_health(self) -> None:
         response = await self.client.get("/health")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"status": "ok"})
+        self.assertEqual(response.json()["status"], "ok")
+        self.assertIn(response.json()["classifier"], {"deterministic", "openai"})
 
     async def test_complete_diagnostic_loop(self) -> None:
         session_id = await self.start_session()
@@ -34,6 +35,7 @@ class ApiTests(unittest.IsolatedAsyncioTestCase):
             json={"answer": "Backprop updates the weights."},
         )
         self.assertEqual(response.json()["next_action"], "probe")
+        self.assertEqual(response.json()["analysis_source"], "deterministic")
 
         response = await self.client.post(
             f"/api/sessions/{session_id}/probe", json={"answer": "yes"}

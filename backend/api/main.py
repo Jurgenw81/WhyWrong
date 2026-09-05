@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from uuid import uuid4
 
@@ -19,6 +20,7 @@ from backend.api.schemas import (
 )
 from backend.api.store import LearningSession, SessionStore
 from backend.diagnostic import DiagnosticEngine, MasteryEngine
+from backend.diagnostic.llm_classifier import OpenAIAnswerClassifier
 from backend.diagnostic.models import Analysis, ConceptState, NextAction
 
 
@@ -45,6 +47,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 diagnostic_engine = DiagnosticEngine()
+llm_classifier = OpenAIAnswerClassifier.from_environment()
 mastery_engine = MasteryEngine()
 session_store = SessionStore()
 concepts = load_concepts()
@@ -98,13 +101,18 @@ def serialize_analysis(
         probe=probe,
         lesson=lesson,
         misconception_id=misconception_id,
+        analysis_source=analysis.source,
         state=serialize_state(session.state),
     )
 
 
 @app.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    return HealthResponse(status="ok")
+    return HealthResponse(
+        status="ok",
+        classifier="openai" if llm_classifier else "deterministic",
+        model=llm_classifier.model if llm_classifier else None,
+    )
 
 
 @app.post("/api/sessions", response_model=SessionResponse, status_code=201)
@@ -137,7 +145,24 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
     if session.phase not in {"question", "lesson"}:
         raise HTTPException(status_code=409, detail="A diagnostic probe is pending")
 
-    analysis = diagnostic_engine.analyze(request.answer)
+    if llm_classifier:
+        try:
+            analysis = await llm_classifier.analyze(request.answer, diagnostic_engine)
+        except Exception:
+            logging.getLogger(__name__).exception(
+                "Structured LLM classification failed; using deterministic fallback"
+            )
+            fallback = diagnostic_engine.analyze(request.answer)
+            analysis = Analysis(
+                correctness=fallback.correctness,
+                reasoning_quality=fallback.reasoning_quality,
+                hypotheses=fallback.hypotheses,
+                next_action=fallback.next_action,
+                probe=fallback.probe,
+                source="deterministic:fallback",
+            )
+    else:
+        analysis = diagnostic_engine.analyze(request.answer)
     session.analysis = analysis
     if analysis.next_action is NextAction.PASS:
         mastery_engine.update(
@@ -170,6 +195,7 @@ async def answer_probe(session_id: str, request: AnswerRequest) -> AnalysisRespo
         hypotheses=hypotheses,
         next_action=NextAction.INTERVENE if misconception_id else NextAction.PROBE,
         probe=None if misconception_id else session.analysis.probe,
+        source=session.analysis.source,
     )
     session.analysis = resolved
     if misconception_id:

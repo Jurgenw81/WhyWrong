@@ -33,6 +33,7 @@ class Analysis:
     hypotheses: tuple[Hypothesis, ...]
     next_action: NextAction
     probe: Probe | None = None
+    source: str = "deterministic"
 
 
 @dataclass
@@ -41,4 +42,3 @@ class ConceptState:
     mastery_probability: float = 0.35
     evidence_count: int = 0
     misconceptions: set[str] = field(default_factory=set)
-

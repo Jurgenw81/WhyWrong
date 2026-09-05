@@ -93,6 +93,8 @@ textarea::placeholder { color: #617269; }
 .choice-grid button { border: 1px solid rgba(174,219,195,.18); border-radius: 12px; padding: 15px; background: rgba(3,10,7,.5); color: var(--ink); font-weight: 700; font-size: 12px; transition: .2s; }
 .choice-grid button:hover { border-color: var(--green); color: var(--green); transform: translateY(-2px); }
 .hypotheses { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 20px; }
+.hypothesis-heading { display: flex; align-items: center; justify-content: space-between; }
+.ai-badge { color: var(--green); background: rgba(102,242,169,.07); border: 1px solid rgba(102,242,169,.18); padding: 5px 7px; border-radius: 999px; font: 9px "DM Mono", monospace; letter-spacing: .08em; }
 .hypothesis { margin-top: 15px; }
 .hypothesis-line { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
 .hypothesis-line strong { color: var(--ink); font-family: "DM Mono", monospace; }

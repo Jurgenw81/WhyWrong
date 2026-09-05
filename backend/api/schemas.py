@@ -51,9 +51,11 @@ class AnalysisResponse(BaseModel):
     probe: ProbeResponse | None
     lesson: str | None = None
     misconception_id: str | None = None
+    analysis_source: str
     state: ConceptStateResponse
 
 
 class HealthResponse(BaseModel):
     status: Literal["ok"]
-
+    classifier: Literal["deterministic", "openai"]
+    model: str | None = None

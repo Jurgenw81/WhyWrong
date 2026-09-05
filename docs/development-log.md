@@ -29,3 +29,10 @@ an LLM-based free-text classifier is connected.
 - Visualized prerequisite concepts and live mastery/misconception state changes.
 - Added hypothesis confidence bars, diagnostic choices, micro-lesson, and retry state.
 - Enabled local frontend-to-API requests with narrow development CORS origins.
+
+## 2026-09-05 — Structured LLM classification
+
+- Added an optional OpenAI Responses API classifier using strict Pydantic output.
+- Kept misconception IDs, probe selection, belief updates, and mastery app-controlled.
+- Added explicit source metadata and deterministic fallback for demo resilience.
+- Added mocked classifier tests; real API credentials remain server-side and uncommitted.
