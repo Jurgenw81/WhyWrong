@@ -1,0 +1,120 @@
+import { ArrowRight, BrainCircuit, CheckCircle2, LoaderCircle, RotateCcw, Sparkles } from "lucide-react";
+
+function Hypotheses({ items }) {
+  if (!items?.length) return null;
+  return (
+    <div className="hypotheses">
+      <span className="eyebrow">WORKING HYPOTHESES</span>
+      {items.map((item) => (
+        <div className="hypothesis" key={item.id}>
+          <div className="hypothesis-line">
+            <span>{item.label}</span>
+            <strong>{Math.round(item.probability * 100)}%</strong>
+          </div>
+          <div className="probability-track">
+            <i style={{ width: `${item.probability * 100}%` }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function LearningPanel({
+  session,
+  result,
+  answer,
+  setAnswer,
+  loading,
+  error,
+  onAnswer,
+  onProbe,
+  onRestart,
+}) {
+  const phase = session?.phase || "loading";
+
+  return (
+    <section className="learning-panel">
+      <div className="concept-kicker">
+        <BrainCircuit size={17} /> Neural Networks · Backpropagation
+      </div>
+
+      {phase === "loading" && (
+        <div className="loading-state"><LoaderCircle className="spin" /> Calibrating diagnostic…</div>
+      )}
+
+      {(phase === "question" || phase === "probe") && session && (
+        <>
+          <div className="step-label">
+            {phase === "question" ? "01 · CONCEPT CHECK" : "02 · DIAGNOSTIC PROBE"}
+          </div>
+          <h1>{phase === "question" ? session.question : result.probe.question}</h1>
+          {phase === "question" ? (
+            <form onSubmit={onAnswer}>
+              <textarea
+                value={answer}
+                onChange={(event) => setAnswer(event.target.value)}
+                placeholder="Explain it in your own words…"
+                autoFocus
+              />
+              <button className="primary-button" disabled={loading || !answer.trim()}>
+                {loading ? <LoaderCircle className="spin" size={18} /> : <>Analyze reasoning <ArrowRight size={18} /></>}
+              </button>
+            </form>
+          ) : (
+            <div className="choice-grid">
+              {result.probe.choices.map((choice) => (
+                <button key={choice} onClick={() => onProbe(choice)} disabled={loading}>
+                  {choice}
+                </button>
+              ))}
+            </div>
+          )}
+          <Hypotheses items={result?.hypotheses} />
+        </>
+      )}
+
+      {phase === "lesson" && (
+        <>
+          <div className="step-label warning">03 · ROOT CAUSE FOUND</div>
+          <div className="diagnosis-title">
+            <Sparkles size={22} />
+            <h1>{result.hypotheses[0].label}</h1>
+          </div>
+          <Hypotheses items={result.hypotheses} />
+          <div className="micro-lesson">
+            <span className="eyebrow">TARGETED REPAIR</span>
+            <p>{result.lesson}</p>
+          </div>
+          <form onSubmit={onAnswer}>
+            <label htmlFor="retry">Now explain the distinction in your own words.</label>
+            <textarea
+              id="retry"
+              value={answer}
+              onChange={(event) => setAnswer(event.target.value)}
+              placeholder="Backpropagation computes…"
+              autoFocus
+            />
+            <button className="primary-button" disabled={loading || !answer.trim()}>
+              Retry concept <ArrowRight size={18} />
+            </button>
+          </form>
+        </>
+      )}
+
+      {phase === "complete" && (
+        <div className="success-state">
+          <CheckCircle2 size={44} />
+          <span className="eyebrow">MENTAL MODEL REPAIRED</span>
+          <h1>You found the boundary.</h1>
+          <p>Backpropagation computes the signal. The optimizer decides how to act on it.</p>
+          <button className="secondary-button" onClick={onRestart}>
+            <RotateCcw size={17} /> Run demo again
+          </button>
+        </div>
+      )}
+
+      {error && <div className="error-message">{error}</div>}
+    </section>
+  );
+}

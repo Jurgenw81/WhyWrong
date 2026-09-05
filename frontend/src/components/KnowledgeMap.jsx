@@ -1,0 +1,71 @@
+import { Check, CircleHelp, Search, TriangleAlert } from "lucide-react";
+
+const nodes = [
+  { id: "derivatives", label: "Derivatives", x: 10, y: 20, state: "mastered" },
+  { id: "chain", label: "Chain rule", x: 29, y: 55, state: "mastered" },
+  { id: "graphs", label: "Computational graphs", x: 29, y: 10, state: "mastered" },
+  { id: "gradients", label: "Gradients", x: 52, y: 34, state: "uncertain" },
+  { id: "backprop", label: "Backpropagation", x: 74, y: 34, state: "focus" },
+  { id: "optimizer", label: "Optimizer updates", x: 91, y: 68, state: "unknown" },
+];
+
+function stateFor(node, phase) {
+  if (node.id === "backprop") {
+    if (phase === "complete") return "mastered";
+    if (phase === "lesson") return "misconception";
+    return "focus";
+  }
+  if (node.id === "optimizer" && phase === "lesson") return "misconception";
+  if (node.id === "gradients" && phase === "complete") return "mastered";
+  return node.state;
+}
+
+function NodeIcon({ state }) {
+  if (state === "mastered") return <Check size={15} strokeWidth={3} />;
+  if (state === "misconception") return <TriangleAlert size={15} />;
+  if (state === "focus") return <Search size={15} />;
+  return <CircleHelp size={15} />;
+}
+
+export default function KnowledgeMap({ phase, mastery }) {
+  return (
+    <section className="map-panel">
+      <div className="panel-heading">
+        <div>
+          <span className="eyebrow">KNOWLEDGE MRI</span>
+          <h2>Your mental model</h2>
+        </div>
+        <div className="mastery-pill">{Math.round(mastery * 100)}% signal</div>
+      </div>
+
+      <div className="graph" aria-label="Neural network knowledge map">
+        <svg className="edges" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M16 27 L31 55" />
+          <path d="M38 18 L53 38" />
+          <path d="M38 59 L53 42" />
+          <path d="M60 40 L74 40" />
+          <path d="M80 46 L89 67" />
+        </svg>
+        {nodes.map((node) => {
+          const state = stateFor(node, phase);
+          return (
+            <div
+              className={`concept-node ${state}`}
+              key={node.id}
+              style={{ left: `${node.x}%`, top: `${node.y}%` }}
+            >
+              <span className="node-icon"><NodeIcon state={state} /></span>
+              <span>{node.label}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="legend">
+        <span><i className="dot mastered" /> Mastered</span>
+        <span><i className="dot uncertain" /> Uncertain</span>
+        <span><i className="dot misconception" /> Misconception</span>
+      </div>
+    </section>
+  );
+}

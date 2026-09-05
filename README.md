@@ -38,6 +38,12 @@ python -m backend.cli
 uvicorn backend.api.main:app --reload
 # Open http://127.0.0.1:8000/docs
 
+# In a second terminal: visual application
+cd frontend
+npm install
+npm run dev
+# Open http://127.0.0.1:5173
+
 # Tests
 python -m unittest discover -s backend/tests -v
 ```
@@ -58,6 +64,9 @@ backend/
     models.py
     probes.py
   tests/
+frontend/
+  src/
+    components/
 docs/
   development-log.md
 ```

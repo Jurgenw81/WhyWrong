@@ -22,3 +22,10 @@ an LLM-based free-text classifier is connected.
 - Added in-memory learning sessions with explicit phase transitions.
 - Added endpoints for session creation, initial answers, probes, retries, and state.
 - Added API integration tests and reproducible project dependency metadata.
+
+## 2026-09-05 — Knowledge MRI interface
+
+- Added a responsive React/Vite interface for the complete diagnostic loop.
+- Visualized prerequisite concepts and live mastery/misconception state changes.
+- Added hypothesis confidence bars, diagnostic choices, micro-lesson, and retry state.
+- Enabled local frontend-to-API requests with narrow development CORS origins.
