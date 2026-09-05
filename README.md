@@ -27,14 +27,29 @@ learning loop.
 ## Run it
 
 ```bash
-python3 -m backend.cli
-python3 -m unittest discover -s backend/tests -v
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
+
+# Interactive terminal prototype
+python -m backend.cli
+
+# HTTP API and interactive docs
+uvicorn backend.api.main:app --reload
+# Open http://127.0.0.1:8000/docs
+
+# Tests
+python -m unittest discover -s backend/tests -v
 ```
 
 ## Project structure
 
 ```text
 backend/
+  api/
+    main.py
+    schemas.py
+    store.py
   cli.py
   curriculum/neural_networks.json
   diagnostic/
@@ -52,4 +67,3 @@ docs/
 Built for the Prometheus Fall Classic. The participant-provided deadline is
 September 26, 2026, and the submission requires source code plus a demo video
 of no more than two minutes.
-

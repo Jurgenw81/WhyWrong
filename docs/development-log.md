@@ -15,3 +15,10 @@ an LLM-based free-text classifier is connected.
 
 - Made diagnostic choice input case-insensitive and whitespace-tolerant.
 - Added regression coverage for lowercase, uppercase, and padded answers.
+
+## 2026-09-05 — Diagnostic API
+
+- Wrapped the diagnostic loop in a FastAPI application.
+- Added in-memory learning sessions with explicit phase transitions.
+- Added endpoints for session creation, initial answers, probes, retries, and state.
+- Added API integration tests and reproducible project dependency metadata.
