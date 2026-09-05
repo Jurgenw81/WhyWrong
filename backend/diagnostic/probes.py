@@ -46,11 +46,15 @@ def select_probe(priors: dict[str, float], probes: tuple[Probe, ...]) -> Probe:
 def update_beliefs(
     priors: dict[str, float], probe: Probe, answer: str
 ) -> dict[str, float]:
-    if answer not in probe.choices:
+    normalized_choices = {choice.casefold(): choice for choice in probe.choices}
+    normalized_answer = answer.strip().casefold()
+    canonical_answer = normalized_choices.get(normalized_answer)
+    if canonical_answer is None:
         raise ValueError(f"Unknown answer {answer!r}; expected one of {probe.choices}")
 
     unnormalized = {
-        hypothesis: probability * probe.likelihoods[hypothesis].get(answer, 0.0)
+        hypothesis: probability
+        * probe.likelihoods[hypothesis].get(canonical_answer, 0.0)
         for hypothesis, probability in priors.items()
     }
     total = sum(unnormalized.values())
@@ -60,4 +64,3 @@ def update_beliefs(
         hypothesis: probability / total
         for hypothesis, probability in unnormalized.items()
     }
-

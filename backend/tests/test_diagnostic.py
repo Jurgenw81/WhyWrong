@@ -44,12 +44,22 @@ class DiagnosticEngineTests(unittest.TestCase):
 
     def test_yes_to_no_optimizer_probe_confirms_confusion(self) -> None:
         analysis = self.engine.analyze("Backprop updates the weights.")
-        hypotheses, misconception, lesson = self.engine.apply_probe(analysis, "Yes")
+        hypotheses, misconception, lesson = self.engine.apply_probe(analysis, "yes")
         self.assertEqual(misconception, OPTIMIZER_CONFUSION)
         self.assertGreater(hypotheses[0].probability, 0.8)
         self.assertIn("optimizer", lesson.lower())
 
+    def test_probe_answers_are_case_and_whitespace_insensitive(self) -> None:
+        analysis = self.engine.analyze("Backprop updates the weights.")
+        for answer in ("yes", "YES", "  Yes  "):
+            with self.subTest(answer=answer):
+                _, misconception, _ = self.engine.apply_probe(analysis, answer)
+                self.assertEqual(misconception, OPTIMIZER_CONFUSION)
+
+        canonical = self.engine.apply_probe(analysis, "No")
+        normalized = self.engine.apply_probe(analysis, "  NO ")
+        self.assertEqual(normalized, canonical)
+
 
 if __name__ == "__main__":
     unittest.main()
-

@@ -10,3 +10,8 @@
 
 The deterministic baseline is intentional: it makes the learning loop testable before
 an LLM-based free-text classifier is connected.
+
+## 2026-09-05 — Probe input fix
+
+- Made diagnostic choice input case-insensitive and whitespace-tolerant.
+- Added regression coverage for lowercase, uppercase, and padded answers.
