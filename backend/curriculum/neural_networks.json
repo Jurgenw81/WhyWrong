@@ -1,0 +1,16 @@
+{
+  "module": "Introductory Neural Networks",
+  "concepts": [
+    {
+      "id": "backpropagation",
+      "name": "Backpropagation",
+      "prerequisites": ["chain_rule", "gradients", "computational_graphs"],
+      "question": "During training, what role does backpropagation play in changing the weights of a neural network?",
+      "misconceptions": [
+        "optimizer_confusion",
+        "gradient_misunderstanding"
+      ]
+    }
+  ]
+}
+
