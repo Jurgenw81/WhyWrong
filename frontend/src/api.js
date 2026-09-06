@@ -3,9 +3,18 @@ async function request(path, options = {}) {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
-  const payload = await response.json();
+  const contentType = response.headers.get("content-type") || "";
+  const payload = contentType.includes("application/json")
+    ? await response.json()
+    : null;
   if (!response.ok) {
-    throw new Error(payload.detail || "Something went wrong");
+    throw new Error(
+      payload?.detail ||
+        `The server returned an error (${response.status}). Please try again.`,
+    );
+  }
+  if (payload === null) {
+    throw new Error("The server returned an invalid response. Please try again.");
   }
   return payload;
 }
