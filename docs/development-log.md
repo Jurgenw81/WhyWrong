@@ -96,3 +96,10 @@ an LLM-based free-text classifier is connected.
 - Made diagram stages selectable with plain-language explanations for each part.
 - Added persistent, evidence-based lesson progress to the home page and course rail.
 - Added resume behavior that returns learners to their first unfinished topic.
+
+## 2026-09-06 — Topic-specific visual rebuild
+
+- Replaced three reused templates with twelve concept-specific diagrams.
+- Added distinct visuals for neuron math, feature hierarchy, ReLU, loss, gradients,
+  backpropagation, optimizer updates, learning rates, batches, splits, and overfitting.
+- Kept every diagram interactive with explanations tied to its actual lesson concepts.
