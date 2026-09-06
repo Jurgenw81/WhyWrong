@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from backend.api.schemas import (
     AnalysisResponse,
@@ -272,3 +273,10 @@ async def read_session(session_id: str) -> SessionResponse:
         phase=session.phase,
         state=serialize_state(session.state),
     )
+
+
+# In production the Vite build is served by FastAPI, keeping the browser and
+# API on one origin. The directory is absent during backend-only development.
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+if FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")

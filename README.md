@@ -71,6 +71,13 @@ python -m unittest discover -s backend/tests -v
 python -m backend.evaluation.run
 ```
 
+## Deploy it
+
+The included `render.yaml` deploys the frontend and API as one Render web
+service. The app works without credentials using the deterministic diagnostic
+engine. To enable Structured Outputs, add `OPENAI_API_KEY` as a secret in the
+hosting dashboard; never commit it to Git.
+
 ## Evaluation
 
 The checked-in evaluation set contains 48 answer variants balanced across

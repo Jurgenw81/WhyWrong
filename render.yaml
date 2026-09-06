@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: whywrong
+    runtime: python
+    plan: free
+    buildCommand: pip install -e . && cd frontend && npm ci && npm run build
+    startCommand: uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: WHYWRONG_RATE_LIMIT
+        value: "10"
+      - key: WHYWRONG_RATE_WINDOW_SECONDS
+        value: "60"
+      - key: WHYWRONG_MAX_SESSION_ANALYSES
+        value: "3"
