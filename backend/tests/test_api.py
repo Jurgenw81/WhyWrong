@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from httpx import ASGITransport, AsyncClient
 
@@ -27,6 +28,23 @@ class ApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "ok")
         self.assertIn(response.json()["classifier"], {"deterministic", "openai"})
+
+    async def test_openai_mode_reads_client_ip_from_http_request(self) -> None:
+        class FakeClassifier:
+            model = "test-model"
+
+            async def analyze(self, answer, engine):
+                return engine.analyze(answer)
+
+        session_id = await self.start_session()
+        with patch("backend.api.main.llm_classifier", FakeClassifier()):
+            response = await self.client.post(
+                f"/api/sessions/{session_id}/answer",
+                json={"answer": "it fixes the loss"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["next_action"], "probe")
 
     async def test_lists_neural_network_concepts(self) -> None:
         response = await self.client.get("/api/concepts")

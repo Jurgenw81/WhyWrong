@@ -169,7 +169,9 @@ async def start_session(request: StartSessionRequest) -> SessionResponse:
 
 
 @app.post("/api/sessions/{session_id}/answer", response_model=AnalysisResponse)
-async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisResponse:
+async def analyze_answer(
+    session_id: str, payload: AnswerRequest, request: Request
+) -> AnalysisResponse:
     session = get_session(session_id)
     if session.phase not in {"question", "lesson"}:
         raise HTTPException(status_code=409, detail="A diagnostic probe is pending")
@@ -194,12 +196,12 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
 
     if use_llm:
         try:
-            analysis = await llm_classifier.analyze(request.answer, session_engine)
+            analysis = await llm_classifier.analyze(payload.answer, session_engine)
         except Exception:
             logging.getLogger(__name__).exception(
                 "Structured LLM classification failed; using deterministic fallback"
             )
-            fallback = session_engine.analyze(request.answer)
+            fallback = session_engine.analyze(payload.answer)
             analysis = Analysis(
                 correctness=fallback.correctness,
                 reasoning_quality=fallback.reasoning_quality,
@@ -209,7 +211,7 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
                 source="deterministic:fallback",
             )
     else:
-        analysis = session_engine.analyze(request.answer)
+        analysis = session_engine.analyze(payload.answer)
     session.analysis = analysis
     if analysis.next_action is NextAction.PASS:
         mastery_engine.update(
