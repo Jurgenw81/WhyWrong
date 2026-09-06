@@ -24,6 +24,7 @@ export default function App() {
     setLoading(true);
     setError("");
     setResult(null);
+    setSession(null);
     setAnswer("");
     try {
       setSession(await startSession(nextConceptId));
@@ -42,6 +43,10 @@ export default function App() {
     setView("course");
     setConceptId(nextConceptId);
     setShowLesson(true);
+    // Clear the previous lesson immediately so its phase cannot render against
+    // the new lesson's intentionally empty diagnostic result.
+    setSession(null);
+    setResult(null);
     begin(nextConceptId);
   }
 

@@ -42,7 +42,13 @@ export default function LearningPanel({
   lessonNumber,
   lessonTotal,
 }) {
-  const phase = session?.phase || "loading";
+  const hasRequiredResult =
+    session?.phase !== "probe" && session?.phase !== "lesson"
+      ? true
+      : session.phase === "probe"
+        ? Boolean(result?.probe)
+        : Boolean(result?.hypotheses?.length && result?.lesson);
+  const phase = session && hasRequiredResult ? session.phase : "loading";
 
   return (
     <section className="learning-panel">
@@ -119,7 +125,7 @@ export default function LearningPanel({
               id="retry"
               value={answer}
               onChange={(event) => setAnswer(event.target.value)}
-              placeholder="Backpropagation computes…"
+              placeholder={`Explain ${concept?.name || "the concept"} in your own words…`}
               autoFocus
             />
             <button className="primary-button" disabled={loading || !answer.trim()}>
