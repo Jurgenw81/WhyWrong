@@ -36,3 +36,10 @@ an LLM-based free-text classifier is connected.
 - Kept misconception IDs, probe selection, belief updates, and mastery app-controlled.
 - Added explicit source metadata and deterministic fallback for demo resilience.
 - Added mocked classifier tests; real API credentials remain server-side and uncommitted.
+
+## 2026-09-06 — Public demo safeguards
+
+- Added per-client sliding-window limits around paid classifier calls.
+- Added a per-session analysis ceiling to constrain repeated requests.
+- Bounded OpenAI request timeouts and retries for predictable demo behavior.
+- Documented the in-process limiter boundary and dashboard spend-limit backstop.

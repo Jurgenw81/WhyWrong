@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.schemas import (
@@ -18,6 +19,7 @@ from backend.api.schemas import (
     SessionResponse,
     StartSessionRequest,
 )
+from backend.api.rate_limit import SlidingWindowRateLimiter
 from backend.api.store import LearningSession, SessionStore
 from backend.diagnostic import DiagnosticEngine, MasteryEngine
 from backend.diagnostic.llm_classifier import OpenAIAnswerClassifier
@@ -50,6 +52,11 @@ diagnostic_engine = DiagnosticEngine()
 llm_classifier = OpenAIAnswerClassifier.from_environment()
 mastery_engine = MasteryEngine()
 session_store = SessionStore()
+analysis_limiter = SlidingWindowRateLimiter(
+    limit=int(os.getenv("WHYWRONG_RATE_LIMIT", "10")),
+    window_seconds=int(os.getenv("WHYWRONG_RATE_WINDOW_SECONDS", "60")),
+)
+max_session_analyses = int(os.getenv("WHYWRONG_MAX_SESSION_ANALYSES", "3"))
 concepts = load_concepts()
 
 
@@ -144,6 +151,22 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
     session = get_session(session_id)
     if session.phase not in {"question", "lesson"}:
         raise HTTPException(status_code=409, detail="A diagnostic probe is pending")
+    if session.analysis_count >= max_session_analyses:
+        raise HTTPException(
+            status_code=429,
+            detail="This learning session has reached its analysis limit.",
+        )
+
+    if llm_classifier:
+        client_key = request.client.host if request.client else "unknown"
+        allowed, retry_after = analysis_limiter.allow(client_key)
+        if not allowed:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Too many AI analyses. Retry in {retry_after} seconds.",
+                headers={"Retry-After": str(retry_after)},
+            )
+    session.analysis_count += 1
 
     if llm_classifier:
         try:

@@ -14,6 +14,7 @@ class LearningSession:
     phase: str = "question"
     analysis: Analysis | None = None
     diagnosed_misconception: str | None = None
+    analysis_count: int = 0
 
 
 class SessionStore:
@@ -28,4 +29,3 @@ class SessionStore:
 
     def clear(self) -> None:
         self._sessions.clear()
-

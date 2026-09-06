@@ -24,6 +24,9 @@ The baseline is deterministic and local. With `OPENAI_API_KEY` configured, the
 backend uses OpenAI Structured Outputs for free-text assessment. Misconception
 IDs, probe selection, belief updates, and mastery remain application-controlled.
 If the API is unavailable, the demo falls back to the deterministic baseline.
+For a small public deployment, LLM calls are guarded by configurable per-IP and
+per-session limits. Configure a hard project spend limit in the OpenAI dashboard
+as the final backstop; the in-process limiter resets whenever the server restarts.
 
 ## Run it
 
@@ -38,6 +41,11 @@ cp .env.example .env
 set -a
 source .env
 set +a
+
+# Optional public-demo limits (defaults shown in .env.example)
+# WHYWRONG_RATE_LIMIT=10
+# WHYWRONG_RATE_WINDOW_SECONDS=60
+# WHYWRONG_MAX_SESSION_ANALYSES=3
 
 # Interactive terminal prototype
 python -m backend.cli

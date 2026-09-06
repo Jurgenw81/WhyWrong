@@ -47,7 +47,7 @@ class OpenAIAnswerClassifier:
         client: AsyncOpenAI | None = None,
         model: str = "gpt-5.4-mini",
     ) -> None:
-        self.client = client or AsyncOpenAI()
+        self.client = client or AsyncOpenAI(timeout=15.0, max_retries=1)
         self.model = model
 
     @classmethod
