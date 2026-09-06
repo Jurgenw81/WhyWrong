@@ -1,4 +1,5 @@
-import { ArrowRight, BrainCircuit, MessageCircleQuestion, ScanSearch, Sparkles } from "lucide-react";
+import { ArrowRight, MessageCircleQuestion, ScanSearch, Sparkles } from "lucide-react";
+import ConceptVisual from "./ConceptVisual";
 
 const steps = [
   [MessageCircleQuestion, "Explain", "Answer in your own words—not a multiple-choice guess."],
@@ -17,10 +18,9 @@ export default function LandingPage({ concepts, onStart }) {
           <button className="primary-button hero-button" onClick={onStart}>Start learning <ArrowRight size={18} /></button>
           <span className="hero-note">12 beginner lessons · no prior AI knowledge required</span>
         </div>
-        <div className="hero-visual" aria-label="WhyWrong diagnostic example">
-          <div className="visual-orbit"><BrainCircuit size={38} /><span>YOUR ANSWER</span></div>
-          <div className="visual-line" />
-          <div className="visual-result"><span className="eyebrow">ROOT CAUSE</span><strong>Gradient ≠ weight update</strong><p>Ask one question to distinguish the misconception.</p></div>
+        <div className="hero-visual">
+          <ConceptVisual conceptId="neural_networks" />
+          <div className="visual-result"><span className="eyebrow">WHAT YOU WILL SEE</span><strong>How every part connects</strong><p>Inputs → layers → loss → gradients → updates.</p></div>
         </div>
       </section>
 

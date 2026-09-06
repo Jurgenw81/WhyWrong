@@ -126,6 +126,28 @@ textarea::placeholder { color: #617269; }
 .lesson-card h1 { margin-bottom: 12px; }
 .lesson-summary { color: var(--green); font-size: 14px; font-weight: 700; line-height: 1.55; margin: 0 0 14px; }
 .lesson-explanation { color: #c5d8cf; font-size: 13px; line-height: 1.7; margin: 0 0 18px; }
+.concept-visual { margin: 18px 0 22px; padding: 14px; border: 1px solid var(--line); border-radius: 15px; background: rgba(3,10,7,.4); overflow: hidden; }
+.visual-title { color: #71847a; font: 8px "DM Mono", monospace; letter-spacing: .13em; }
+.concept-visual svg { display: block; width: 100%; height: auto; max-height: 270px; margin-top: 6px; overflow: visible; }
+.concept-visual svg text { fill: #8fa39a; font: 8px "DM Mono", monospace; letter-spacing: .06em; }
+.visual-edges path { stroke: rgba(174,219,195,.22); stroke-width: 1.2; fill: none; }
+.visual-nodes circle { fill: #0c1b16; stroke: rgba(174,219,195,.3); stroke-width: 1.5; }
+.visual-nodes.active circle { fill: rgba(102,242,169,.1); stroke: var(--green); stroke-width: 2; }
+.visual-arrow, .loop-path { stroke: var(--green); stroke-width: 1.6; fill: none; }
+.visual-arrow + text { fill: var(--green); }
+#arrow path, #loop-arrow path { fill: var(--green); }
+.loop-step circle { fill: #0c1b16; stroke: rgba(174,219,195,.28); stroke-width: 1.4; }
+.loop-step.active circle { fill: rgba(255,197,110,.1); stroke: var(--amber); stroke-width: 2.2; }
+.loop-step.active text { fill: var(--amber); }
+.loop-center { fill: #617269 !important; }
+.chart-axis { stroke: rgba(174,219,195,.45); stroke-width: 1.4; fill: none; }
+.chart-grid { stroke: rgba(174,219,195,.1); stroke-width: 1; fill: none; }
+.chart-line { fill: none; stroke-width: 3; stroke-linecap: round; }
+.chart-line.training { stroke: var(--green); }
+.chart-line.validation { stroke: var(--amber); }
+.overfit-line { stroke: var(--red); stroke-width: 1; stroke-dasharray: 5 5; }
+.overfit-label { fill: var(--red) !important; }
+.chart-callout { fill: var(--amber) !important; }
 .lesson-note { display: flex; gap: 11px; padding: 13px; margin-top: 9px; border: 1px solid rgba(255,197,110,.16); border-radius: 11px; background: rgba(255,197,110,.045); color: #c5d8cf; font-size: 11px; line-height: 1.55; }
 .lesson-note > svg { flex: 0 0 auto; color: var(--amber); margin-top: 2px; }
 .lesson-note span { display: block; color: var(--amber); font: 8px "DM Mono", monospace; letter-spacing: .12em; margin-bottom: 4px; }
@@ -149,7 +171,8 @@ footer { display: flex; justify-content: space-between; border-top: 1px solid va
 .hero-copy > p { max-width: 610px; color: #a9bdb3; line-height: 1.75; font-size: 16px; }
 .hero-button { padding: 15px 21px; font-size: 13px; }
 .hero-note { display: block; margin-top: 14px; color: #617269; font: 9px "DM Mono", monospace; letter-spacing: .08em; }
-.hero-visual { min-height: 350px; position: relative; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 28px; background: radial-gradient(circle at 50% 35%, rgba(102,242,169,.12), transparent 45%), rgba(8,20,15,.55); overflow: hidden; }
+.hero-visual { min-height: 350px; position: relative; display: grid; place-items: center; padding: 22px 22px 90px; border: 1px solid var(--line); border-radius: 28px; background: radial-gradient(circle at 50% 35%, rgba(102,242,169,.12), transparent 45%), rgba(8,20,15,.55); overflow: hidden; }
+.hero-visual .concept-visual { width: 100%; margin: 0; background: transparent; border: 0; }
 .visual-orbit { width: 150px; height: 150px; border: 1px solid rgba(102,242,169,.32); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 13px; color: var(--green); box-shadow: 0 0 0 24px rgba(102,242,169,.025), 0 0 0 48px rgba(102,242,169,.015); }
 .visual-orbit span { font: 8px "DM Mono", monospace; letter-spacing: .13em; }
 .visual-result { position: absolute; right: 24px; bottom: 24px; width: min(290px, calc(100% - 48px)); padding: 17px; border: 1px solid rgba(255,197,110,.24); border-radius: 14px; background: rgba(8,18,14,.94); }

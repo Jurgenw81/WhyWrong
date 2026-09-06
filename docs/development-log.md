@@ -83,3 +83,9 @@ an LLM-based free-text classifier is connected.
 - Added a real product landing page with positioning, workflow, and course preview.
 - Changed the WhyWrong logo into reliable in-app home navigation.
 - Added a clear call to action that begins the course at lesson one.
+
+## 2026-09-06 — Explanatory neural-network visuals
+
+- Added directly labeled network, training-loop, and generalization diagrams.
+- Highlighted the relevant mechanism for each lesson without implying mastery.
+- Replaced the landing-page ornament with an actual input-to-output network diagram.

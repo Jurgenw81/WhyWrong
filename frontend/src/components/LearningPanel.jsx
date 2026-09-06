@@ -1,4 +1,5 @@
 import { ArrowRight, BrainCircuit, CheckCircle2, Lightbulb, Link2, LoaderCircle, RotateCcw, Sparkles } from "lucide-react";
+import ConceptVisual from "./ConceptVisual";
 
 function Hypotheses({ items, source }) {
   if (!items?.length) return null;
@@ -61,6 +62,7 @@ export default function LearningPanel({
           <div className="step-label">LEARN · THEN EXPLAIN</div>
           <h1>{concept.name}</h1>
           <p className="lesson-summary">{concept.summary}</p>
+          <ConceptVisual conceptId={concept.id} />
           <p className="lesson-explanation">{concept.explanation}</p>
           <div className="lesson-note"><Lightbulb size={17} /><div><span>EXAMPLE</span>{concept.example}</div></div>
           <div className="lesson-note connection"><Link2 size={17} /><div><span>HOW IT CONNECTS</span>{concept.connection}</div></div>
