@@ -1,10 +1,10 @@
 import { Check, CircleHelp, Search, TriangleAlert } from "lucide-react";
 
 const defaultNodes = [
-  { id: "derivatives", label: "Derivatives", x: 10, y: 20, state: "mastered" },
-  { id: "chain", label: "Chain rule", x: 29, y: 55, state: "mastered" },
-  { id: "graphs", label: "Computational graphs", x: 29, y: 10, state: "mastered" },
-  { id: "gradients", label: "Gradients", x: 52, y: 34, state: "uncertain" },
+  { id: "derivatives", label: "Derivatives", x: 10, y: 20, state: "unknown" },
+  { id: "chain", label: "Chain rule", x: 29, y: 55, state: "unknown" },
+  { id: "graphs", label: "Computational graphs", x: 29, y: 10, state: "unknown" },
+  { id: "gradients", label: "Gradients", x: 52, y: 34, state: "unknown" },
   { id: "backprop", label: "Backpropagation", x: 74, y: 34, state: "focus" },
   { id: "optimizer", label: "Optimizer updates", x: 91, y: 68, state: "unknown" },
 ];
@@ -39,9 +39,14 @@ function stateFor(node, phase) {
     if (phase === "lesson") return "misconception";
     return "focus";
   }
-  if (node.id === "optimizer" && phase === "lesson") return "misconception";
-  if (node.id === "gradients" && phase === "complete") return "mastered";
   return node.state;
+}
+
+function assessmentStatus(phase, evidenceCount) {
+  if (!evidenceCount && phase === "question") return "Not assessed";
+  if (phase === "complete") return "Demonstrated";
+  if (phase === "lesson") return "Misconception found";
+  return "Assessment in progress";
 }
 
 function NodeIcon({ state }) {
@@ -51,16 +56,16 @@ function NodeIcon({ state }) {
   return <CircleHelp size={15} />;
 }
 
-export default function KnowledgeMap({ phase, mastery, conceptId }) {
+export default function KnowledgeMap({ phase, evidenceCount, conceptId }) {
   const nodes = nodesFor(conceptId);
   return (
     <section className="map-panel">
       <div className="panel-heading">
         <div>
           <span className="eyebrow">KNOWLEDGE MRI</span>
-          <h2>Your mental model</h2>
+          <h2>Current concept model</h2>
         </div>
-        <div className="mastery-pill">{Math.round(mastery * 100)}% signal</div>
+        <div className="mastery-pill">{assessmentStatus(phase, evidenceCount)}</div>
       </div>
 
       <div className="graph" aria-label="Neural network knowledge map">
@@ -87,8 +92,9 @@ export default function KnowledgeMap({ phase, mastery, conceptId }) {
       </div>
 
       <div className="legend">
-        <span><i className="dot mastered" /> Mastered</span>
-        <span><i className="dot uncertain" /> Uncertain</span>
+        <span><i className="dot mastered" /> Demonstrated here</span>
+        <span><i className="dot uncertain" /> Being assessed</span>
+        <span><i className="dot unknown" /> Not assessed</span>
         <span><i className="dot misconception" /> Misconception</span>
       </div>
     </section>

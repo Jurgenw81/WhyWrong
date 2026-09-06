@@ -64,3 +64,9 @@ an LLM-based free-text classifier is connected.
 - Added plain-language explanations, concrete examples, and explicit concept connections.
 - Reworked navigation into a staged beginner curriculum with progress and next-lesson flow.
 - Ensured every topic has its own misconception hypotheses, diagnostic probe, and repair.
+
+## 2026-09-06 — Evidence-backed knowledge states
+
+- Removed hardcoded prerequisite mastery claims from the knowledge map.
+- Replaced the arbitrary initial percentage with explicit assessment status.
+- Limited demonstrated and misconception states to evidence produced in the current session.

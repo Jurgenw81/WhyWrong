@@ -82,7 +82,7 @@ export default function App() {
   }
 
   const phase = session?.phase || "loading";
-  const mastery = session?.state?.mastery_probability ?? 0.35;
+  const evidenceCount = session?.state?.evidence_count ?? 0;
   const selectedConcept = concepts.find((item) => item.id === conceptId);
   const activeIndex = concepts.findIndex((item) => item.id === conceptId);
   const nextConcept = concepts[activeIndex + 1];
@@ -106,7 +106,7 @@ export default function App() {
         </div>
         <div className="workspace">
           <CurriculumRail concepts={concepts} activeId={conceptId} completed={completed} onChoose={chooseConcept} />
-          <KnowledgeMap phase={phase} mastery={mastery} conceptId={conceptId} />
+          <KnowledgeMap phase={phase} evidenceCount={evidenceCount} conceptId={conceptId} />
           <LearningPanel
             session={session}
             result={result}
