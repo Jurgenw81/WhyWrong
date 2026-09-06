@@ -77,3 +77,9 @@ an LLM-based free-text classifier is connected.
 - Rebuilt the page as a stable two-column curriculum and lesson layout.
 - Added explicit lesson numbering and a course progress indicator.
 - Increased reading width and added narrow-screen stacking without overlays.
+
+## 2026-09-06 — Landing page and home navigation
+
+- Added a real product landing page with positioning, workflow, and course preview.
+- Changed the WhyWrong logo into reliable in-app home navigation.
+- Added a clear call to action that begins the course at lesson one.

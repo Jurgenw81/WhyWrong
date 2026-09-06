@@ -3,17 +3,19 @@ import { Activity } from "lucide-react";
 import { getConcepts, startSession, submitAnswer, submitProbe } from "./api";
 import LearningPanel from "./components/LearningPanel";
 import CurriculumRail from "./components/CurriculumRail";
+import LandingPage from "./components/LandingPage";
 
 export default function App() {
   const [session, setSession] = useState(null);
   const [result, setResult] = useState(null);
   const [answer, setAnswer] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [concepts, setConcepts] = useState([]);
   const [conceptId, setConceptId] = useState("neural_networks");
   const [showLesson, setShowLesson] = useState(true);
   const [completed, setCompleted] = useState(() => new Set());
+  const [view, setView] = useState("home");
 
   async function begin(nextConceptId = conceptId) {
     setLoading(true);
@@ -31,13 +33,18 @@ export default function App() {
 
   useEffect(() => {
     getConcepts().then(setConcepts).catch(() => {});
-    begin("neural_networks");
   }, []);
 
   function chooseConcept(nextConceptId) {
+    setView("course");
     setConceptId(nextConceptId);
     setShowLesson(true);
     begin(nextConceptId);
+  }
+
+  function goHome() {
+    setView("home");
+    setError("");
   }
 
   async function handleAnswer(event) {
@@ -88,16 +95,16 @@ export default function App() {
   return (
     <div className="app-shell">
       <header>
-        <a className="brand" href="/">
+        <button className="brand" onClick={goHome} aria-label="WhyWrong home">
           <span className="brand-mark">W?</span>
           <span>WhyWrong</span>
-        </a>
+        </button>
         <div className="header-meta">
           <span><Activity size={14} /> Diagnostic engine live</span>
         </div>
       </header>
 
-      <main>
+      {view === "home" ? <LandingPage concepts={concepts} onStart={() => chooseConcept("neural_networks")} /> : <main>
         <div className="intro">
           <span className="eyebrow">AI LEARNING DEBUGGER</span>
           <p>Don’t just correct mistakes. Understand them.</p>
@@ -123,7 +130,7 @@ export default function App() {
             lessonTotal={concepts.length}
           />
         </div>
-      </main>
+      </main>}
 
       <footer>
         <span>Prometheus Fall Classic · 2026</span>
