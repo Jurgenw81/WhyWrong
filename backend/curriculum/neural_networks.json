@@ -10,7 +10,30 @@
         "optimizer_confusion",
         "gradient_misunderstanding"
       ]
+    },
+    {
+      "id": "activation_functions",
+      "name": "Activation Functions",
+      "prerequisites": ["linear_algebra", "weighted_sums"],
+      "question": "Why do neural networks need nonlinear activation functions between layers?",
+      "reference": "Nonlinear activations let stacked layers represent nonlinear functions; without them, multiple linear layers collapse into one linear transformation.",
+      "misconceptions": ["activation_adds_weights", "activation_is_only_threshold"]
+    },
+    {
+      "id": "learning_rate",
+      "name": "Learning Rate",
+      "prerequisites": ["gradients", "optimization"],
+      "question": "What does the learning rate control during neural-network training?",
+      "reference": "The learning rate scales optimizer updates; values that are too large can overshoot or diverge, while values that are too small can make progress very slow.",
+      "misconceptions": ["learning_rate_changes_direction", "higher_is_always_faster"]
+    },
+    {
+      "id": "overfitting",
+      "name": "Overfitting",
+      "prerequisites": ["training_data", "validation_data"],
+      "question": "How can a model achieve very low training loss but still perform poorly on new data?",
+      "reference": "It can overfit by learning training-specific noise or patterns that do not generalize; validation performance estimates behavior on unseen data.",
+      "misconceptions": ["training_loss_proves_generalization", "more_training_always_helps"]
     }
   ]
 }
-

@@ -28,6 +28,39 @@ class ApiTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.json()["status"], "ok")
         self.assertIn(response.json()["classifier"], {"deterministic", "openai"})
 
+    async def test_lists_neural_network_concepts(self) -> None:
+        response = await self.client.get("/api/concepts")
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(len(body), 4)
+        self.assertEqual(
+            {item["id"] for item in body},
+            {"backpropagation", "activation_functions", "learning_rate", "overfitting"},
+        )
+
+    async def test_additional_concept_has_its_own_diagnostic_loop(self) -> None:
+        response = await self.client.post(
+            "/api/sessions", json={"concept_id": "learning_rate"}
+        )
+        self.assertEqual(response.status_code, 201)
+        session_id = response.json()["session_id"]
+
+        response = await self.client.post(
+            f"/api/sessions/{session_id}/answer",
+            json={"answer": "A higher learning rate always makes training faster."},
+        )
+        body = response.json()
+        self.assertEqual(body["next_action"], "probe")
+        self.assertEqual(body["hypotheses"][0]["id"], "higher_is_always_faster")
+
+        response = await self.client.post(
+            f"/api/sessions/{session_id}/probe", json={"answer": "No"}
+        )
+        body = response.json()
+        self.assertEqual(body["next_action"], "intervene")
+        self.assertEqual(body["misconception_id"], "higher_is_always_faster")
+        self.assertIn("overshoot", body["lesson"].lower())
+
     async def test_complete_diagnostic_loop(self) -> None:
         session_id = await self.start_session()
         response = await self.client.post(

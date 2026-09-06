@@ -46,6 +46,11 @@ header { height: 74px; display: flex; align-items: center; justify-content: spac
 main { width: min(1400px, calc(100% - 48px)); margin: 0 auto; flex: 1; padding: 52px 0 34px; }
 .intro { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
 .intro p { margin: 0; color: var(--muted); font-size: 13px; }
+.concept-tabs { display: flex; gap: 8px; margin: 0 0 14px; overflow-x: auto; padding-bottom: 3px; }
+.concept-tabs button { flex: 0 0 auto; color: var(--muted); background: rgba(12,27,22,.55); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 11px; }
+.concept-tabs button span { margin-right: 8px; color: #617269; font: 9px "DM Mono", monospace; }
+.concept-tabs button.active { color: var(--ink); border-color: rgba(102,242,169,.42); background: rgba(102,242,169,.07); }
+.concept-tabs button.active span { color: var(--green); }
 .eyebrow, .step-label { font-family: "DM Mono", monospace; letter-spacing: .14em; font-size: 10px; color: var(--green); }
 .workspace { display: grid; grid-template-columns: minmax(520px, 1.1fr) minmax(420px, .9fr); min-height: 620px; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 30px 100px rgba(0,0,0,.32); background: rgba(5, 13, 10, .5); backdrop-filter: blur(18px); }
 

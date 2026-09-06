@@ -39,7 +39,7 @@ export default function LearningPanel({
   return (
     <section className="learning-panel">
       <div className="concept-kicker">
-        <BrainCircuit size={17} /> Neural Networks · Backpropagation
+        <BrainCircuit size={17} /> Neural Networks · {session?.concept_name || "Concept check"}
       </div>
 
       {phase === "loading" && (
@@ -110,7 +110,7 @@ export default function LearningPanel({
           <CheckCircle2 size={44} />
           <span className="eyebrow">MENTAL MODEL REPAIRED</span>
           <h1>You found the boundary.</h1>
-          <p>Backpropagation computes the signal. The optimizer decides how to act on it.</p>
+          <p>Your explanation now separates the mechanism from the misconception.</p>
           <button className="secondary-button" onClick={onRestart}>
             <RotateCcw size={17} /> Run demo again
           </button>

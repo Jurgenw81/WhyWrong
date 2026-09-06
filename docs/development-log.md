@@ -50,3 +50,10 @@ an LLM-based free-text classifier is connected.
 - Added deterministic and optional OpenAI evaluation runners with per-label metrics.
 - Added Markdown and JSON reports suitable for the repository and submission evidence.
 - Required an explicit paid-run flag before an evaluation can make OpenAI requests.
+
+## 2026-09-06 — Neural-network question bank
+
+- Expanded the demo from one concept to four: backpropagation, activation functions,
+  learning rate, and overfitting.
+- Added concept-specific misconception hypotheses, separating probes, and micro-lessons.
+- Added an API concept catalog and a responsive topic selector with contextual maps.

@@ -9,6 +9,13 @@ class StartSessionRequest(BaseModel):
     concept_id: str = "backpropagation"
 
 
+class ConceptResponse(BaseModel):
+    id: str
+    name: str
+    question: str
+    prerequisites: list[str]
+
+
 class AnswerRequest(BaseModel):
     answer: str = Field(min_length=1, max_length=2_000)
 

@@ -11,6 +11,7 @@ class LearningSession:
     concept_name: str
     question: str
     state: ConceptState
+    diagnostic_engine: object | None = None
     phase: str = "question"
     analysis: Analysis | None = None
     diagnosed_misconception: str | None = None

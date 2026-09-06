@@ -13,6 +13,7 @@ from backend.api.schemas import (
     AnalysisResponse,
     AnswerRequest,
     ConceptStateResponse,
+    ConceptResponse,
     HealthResponse,
     HypothesisResponse,
     ProbeResponse,
@@ -22,6 +23,7 @@ from backend.api.schemas import (
 from backend.api.rate_limit import SlidingWindowRateLimiter
 from backend.api.store import LearningSession, SessionStore
 from backend.diagnostic import DiagnosticEngine, MasteryEngine
+from backend.diagnostic.concept_engine import engine_for
 from backend.diagnostic.llm_classifier import OpenAIAnswerClassifier
 from backend.diagnostic.models import Analysis, ConceptState, NextAction
 
@@ -58,6 +60,19 @@ analysis_limiter = SlidingWindowRateLimiter(
 )
 max_session_analyses = int(os.getenv("WHYWRONG_MAX_SESSION_ANALYSES", "3"))
 concepts = load_concepts()
+
+
+@app.get("/api/concepts", response_model=list[ConceptResponse])
+async def list_concepts() -> list[ConceptResponse]:
+    return [
+        ConceptResponse(
+            id=str(item["id"]),
+            name=str(item["name"]),
+            question=str(item["question"]),
+            prerequisites=[str(value) for value in item.get("prerequisites", [])],
+        )
+        for item in concepts.values()
+    ]
 
 
 def get_session(session_id: str) -> LearningSession:
@@ -134,6 +149,7 @@ async def start_session(request: StartSessionRequest) -> SessionResponse:
         concept_name=str(concept["name"]),
         question=str(concept["question"]),
         state=ConceptState(request.concept_id),
+        diagnostic_engine=engine_for(request.concept_id),
     )
     session_store.add(session_id, session)
     return SessionResponse(
@@ -157,7 +173,9 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
             detail="This learning session has reached its analysis limit.",
         )
 
-    if llm_classifier:
+    session_engine = session.diagnostic_engine or diagnostic_engine
+    use_llm = llm_classifier is not None and session.concept_id == "backpropagation"
+    if use_llm:
         client_key = request.client.host if request.client else "unknown"
         allowed, retry_after = analysis_limiter.allow(client_key)
         if not allowed:
@@ -168,14 +186,14 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
             )
     session.analysis_count += 1
 
-    if llm_classifier:
+    if use_llm:
         try:
-            analysis = await llm_classifier.analyze(request.answer, diagnostic_engine)
+            analysis = await llm_classifier.analyze(request.answer, session_engine)
         except Exception:
             logging.getLogger(__name__).exception(
                 "Structured LLM classification failed; using deterministic fallback"
             )
-            fallback = diagnostic_engine.analyze(request.answer)
+            fallback = session_engine.analyze(request.answer)
             analysis = Analysis(
                 correctness=fallback.correctness,
                 reasoning_quality=fallback.reasoning_quality,
@@ -185,7 +203,7 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
                 source="deterministic:fallback",
             )
     else:
-        analysis = diagnostic_engine.analyze(request.answer)
+        analysis = session_engine.analyze(request.answer)
     session.analysis = analysis
     if analysis.next_action is NextAction.PASS:
         mastery_engine.update(
@@ -206,7 +224,8 @@ async def answer_probe(session_id: str, request: AnswerRequest) -> AnalysisRespo
         raise HTTPException(status_code=409, detail="No diagnostic probe is pending")
 
     try:
-        hypotheses, misconception_id, lesson = diagnostic_engine.apply_probe(
+        session_engine = session.diagnostic_engine or diagnostic_engine
+        hypotheses, misconception_id, lesson = session_engine.apply_probe(
             session.analysis, request.answer
         )
     except ValueError as error:

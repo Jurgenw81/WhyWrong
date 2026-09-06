@@ -10,10 +10,14 @@ async function request(path, options = {}) {
   return payload;
 }
 
-export function startSession() {
+export function getConcepts() {
+  return request("/api/concepts");
+}
+
+export function startSession(conceptId = "backpropagation") {
   return request("/api/sessions", {
     method: "POST",
-    body: JSON.stringify({ concept_id: "backpropagation" }),
+    body: JSON.stringify({ concept_id: conceptId }),
   });
 }
 

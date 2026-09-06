@@ -1,6 +1,6 @@
 import { Check, CircleHelp, Search, TriangleAlert } from "lucide-react";
 
-const nodes = [
+const defaultNodes = [
   { id: "derivatives", label: "Derivatives", x: 10, y: 20, state: "mastered" },
   { id: "chain", label: "Chain rule", x: 29, y: 55, state: "mastered" },
   { id: "graphs", label: "Computational graphs", x: 29, y: 10, state: "mastered" },
@@ -8,6 +8,22 @@ const nodes = [
   { id: "backprop", label: "Backpropagation", x: 74, y: 34, state: "focus" },
   { id: "optimizer", label: "Optimizer updates", x: 91, y: 68, state: "unknown" },
 ];
+
+const topicMaps = {
+  activation_functions: ["Inputs", "Weighted sums", "Linear layers", "Nonlinearity", "Activation functions", "Expressive network"],
+  learning_rate: ["Loss", "Gradients", "Update direction", "Step size", "Learning rate", "Convergence"],
+  overfitting: ["Training data", "Training loss", "Model capacity", "Validation data", "Generalization", "Overfitting"],
+};
+
+function nodesFor(conceptId) {
+  const labels = topicMaps[conceptId];
+  if (!labels) return defaultNodes;
+  return defaultNodes.map((node, index) => ({
+    ...node,
+    label: labels[index],
+    id: index === 4 ? "backprop" : index === 5 ? "optimizer" : node.id,
+  }));
+}
 
 function stateFor(node, phase) {
   if (node.id === "backprop") {
@@ -27,7 +43,8 @@ function NodeIcon({ state }) {
   return <CircleHelp size={15} />;
 }
 
-export default function KnowledgeMap({ phase, mastery }) {
+export default function KnowledgeMap({ phase, mastery, conceptId }) {
+  const nodes = nodesFor(conceptId);
   return (
     <section className="map-panel">
       <div className="panel-heading">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Activity } from "lucide-react";
-import { startSession, submitAnswer, submitProbe } from "./api";
+import { getConcepts, startSession, submitAnswer, submitProbe } from "./api";
 import KnowledgeMap from "./components/KnowledgeMap";
 import LearningPanel from "./components/LearningPanel";
 
@@ -10,14 +10,16 @@ export default function App() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [concepts, setConcepts] = useState([]);
+  const [conceptId, setConceptId] = useState("backpropagation");
 
-  async function begin() {
+  async function begin(nextConceptId = conceptId) {
     setLoading(true);
     setError("");
     setResult(null);
     setAnswer("");
     try {
-      setSession(await startSession());
+      setSession(await startSession(nextConceptId));
     } catch (err) {
       setError(`${err.message}. Is the FastAPI server running on port 8000?`);
     } finally {
@@ -25,7 +27,15 @@ export default function App() {
     }
   }
 
-  useEffect(() => { begin(); }, []);
+  useEffect(() => {
+    getConcepts().then(setConcepts).catch(() => {});
+    begin("backpropagation");
+  }, []);
+
+  function chooseConcept(nextConceptId) {
+    setConceptId(nextConceptId);
+    begin(nextConceptId);
+  }
 
   async function handleAnswer(event) {
     event.preventDefault();
@@ -86,8 +96,21 @@ export default function App() {
           <span className="eyebrow">AI LEARNING DEBUGGER</span>
           <p>Don’t just correct mistakes. Understand them.</p>
         </div>
+        <nav className="concept-tabs" aria-label="Choose a neural-network concept">
+          {concepts.map((concept, index) => (
+            <button
+              className={concept.id === conceptId ? "active" : ""}
+              key={concept.id}
+              onClick={() => chooseConcept(concept.id)}
+              disabled={loading}
+            >
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              {concept.name}
+            </button>
+          ))}
+        </nav>
         <div className="workspace">
-          <KnowledgeMap phase={phase} mastery={mastery} />
+          <KnowledgeMap phase={phase} mastery={mastery} conceptId={conceptId} />
           <LearningPanel
             session={session}
             result={result}
@@ -97,7 +120,7 @@ export default function App() {
             error={error}
             onAnswer={handleAnswer}
             onProbe={handleProbe}
-            onRestart={begin}
+            onRestart={() => begin(conceptId)}
           />
         </div>
       </main>
