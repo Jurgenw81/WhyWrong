@@ -14,7 +14,10 @@ export default function App() {
   const [concepts, setConcepts] = useState([]);
   const [conceptId, setConceptId] = useState("neural_networks");
   const [showLesson, setShowLesson] = useState(true);
-  const [completed, setCompleted] = useState(() => new Set());
+  const [completed, setCompleted] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem("whywrong.completed") || "[]")); }
+    catch { return new Set(); }
+  });
   const [view, setView] = useState("home");
 
   async function begin(nextConceptId = conceptId) {
@@ -61,7 +64,11 @@ export default function App() {
         state: data.state,
       }));
       setAnswer("");
-      if (data.next_action === "pass") setCompleted((current) => new Set([...current, conceptId]));
+      if (data.next_action === "pass") setCompleted((current) => {
+        const updated = new Set([...current, conceptId]);
+        localStorage.setItem("whywrong.completed", JSON.stringify([...updated]));
+        return updated;
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -91,6 +98,7 @@ export default function App() {
   const selectedConcept = concepts.find((item) => item.id === conceptId);
   const activeIndex = concepts.findIndex((item) => item.id === conceptId);
   const nextConcept = concepts[activeIndex + 1];
+  const resumeConcept = concepts.find((item) => !completed.has(item.id)) || concepts[0];
 
   return (
     <div className="app-shell">
@@ -104,7 +112,7 @@ export default function App() {
         </div>
       </header>
 
-      {view === "home" ? <LandingPage concepts={concepts} onStart={() => chooseConcept("neural_networks")} /> : <main>
+      {view === "home" ? <LandingPage concepts={concepts} completedCount={completed.size} onStart={() => chooseConcept(resumeConcept?.id || "neural_networks")} /> : <main>
         <div className="intro">
           <span className="eyebrow">AI LEARNING DEBUGGER</span>
           <p>Don’t just correct mistakes. Understand them.</p>

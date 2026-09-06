@@ -4,7 +4,7 @@ export default function CurriculumRail({ concepts, activeId, completed, onChoose
   let stage = "";
   return (
     <aside className="course-rail">
-      <div className="course-heading"><BookOpen size={16} /><div><span className="eyebrow">BEGINNER PATH</span><strong>Neural Networks from Zero</strong></div></div>
+      <div className="course-heading"><BookOpen size={16} /><div><span className="eyebrow">BEGINNER PATH</span><strong>Neural Networks from Zero</strong><small>{completed.size} of {concepts.length} demonstrated</small></div></div>
       <div className="course-list">
         {concepts.map((concept, index) => {
           const showStage = stage !== concept.stage;

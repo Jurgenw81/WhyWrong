@@ -89,3 +89,10 @@ an LLM-based free-text classifier is connected.
 - Added directly labeled network, training-loop, and generalization diagrams.
 - Highlighted the relevant mechanism for each lesson without implying mastery.
 - Replaced the landing-page ornament with an actual input-to-output network diagram.
+
+## 2026-09-06 — Interactive visual explanations and persistent progress
+
+- Removed the overlay that obscured the network diagram and its labels.
+- Made diagram stages selectable with plain-language explanations for each part.
+- Added persistent, evidence-based lesson progress to the home page and course rail.
+- Added resume behavior that returns learners to their first unfinished topic.

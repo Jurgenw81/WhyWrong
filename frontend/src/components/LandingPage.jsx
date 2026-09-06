@@ -7,7 +7,7 @@ const steps = [
   [Sparkles, "Repair", "A targeted probe and short lesson fix the specific gap."],
 ];
 
-export default function LandingPage({ concepts, onStart }) {
+export default function LandingPage({ concepts, completedCount, onStart }) {
   return (
     <main className="landing">
       <section className="hero">
@@ -15,12 +15,12 @@ export default function LandingPage({ concepts, onStart }) {
           <span className="eyebrow">AI LEARNING DEBUGGER</span>
           <h1>Don’t just correct mistakes. <em>Understand them.</em></h1>
           <p>Learn neural networks from zero. WhyWrong teaches each idea, checks your explanation, and diagnoses why an answer is wrong before showing the fix.</p>
-          <button className="primary-button hero-button" onClick={onStart}>Start learning <ArrowRight size={18} /></button>
+          <button className="primary-button hero-button" onClick={onStart}>{completedCount ? "Continue learning" : "Start learning"} <ArrowRight size={18} /></button>
+          <div className="home-progress"><span><b>{completedCount}</b> / {concepts.length || 12} lessons demonstrated</span><i><b style={{width:`${(completedCount / (concepts.length || 12)) * 100}%`}} /></i></div>
           <span className="hero-note">12 beginner lessons · no prior AI knowledge required</span>
         </div>
         <div className="hero-visual">
           <ConceptVisual conceptId="neural_networks" />
-          <div className="visual-result"><span className="eyebrow">WHAT YOU WILL SEE</span><strong>How every part connects</strong><p>Inputs → layers → loss → gradients → updates.</p></div>
         </div>
       </section>
 
