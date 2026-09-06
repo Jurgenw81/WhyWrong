@@ -43,3 +43,10 @@ an LLM-based free-text classifier is connected.
 - Added a per-session analysis ceiling to constrain repeated requests.
 - Bounded OpenAI request timeouts and retries for predictable demo behavior.
 - Documented the in-process limiter boundary and dashboard spend-limit backstop.
+
+## 2026-09-06 — Reproducible evaluation
+
+- Added a checked-in, balanced dataset of 48 labeled student answers.
+- Added deterministic and optional OpenAI evaluation runners with per-label metrics.
+- Added Markdown and JSON reports suitable for the repository and submission evidence.
+- Required an explicit paid-run flag before an evaluation can make OpenAI requests.

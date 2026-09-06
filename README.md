@@ -62,7 +62,34 @@ npm run dev
 
 # Tests
 python -m unittest discover -s backend/tests -v
+
+# Reproducible, free deterministic evaluation (48 labeled answers)
+python -m backend.evaluation.run
 ```
+
+## Evaluation
+
+The checked-in evaluation set contains 48 answer variants balanced across
+correct explanations, optimizer confusion, gradient misunderstanding, and
+genuinely ambiguous responses. The generated Markdown and JSON reports make the
+baseline reproducible for judges without an API key.
+
+An OpenAI comparison is optional and never runs implicitly. Each evaluated row
+is a paid API request, so it requires both a server-side `OPENAI_API_KEY` and an
+explicit confirmation flag:
+
+```bash
+# Small paid smoke run
+python -m backend.evaluation.run --provider openai --limit 4 --confirm-paid-run \
+  --output docs/evaluation-openai-smoke.md
+
+# Full paid comparison
+python -m backend.evaluation.run --provider openai --confirm-paid-run \
+  --output docs/evaluation-openai.md
+```
+
+The API key stays in the ignored `.env` file. It is not needed to run the local
+baseline, tests, frontend, or deterministic fallback.
 
 ## Project structure
 
@@ -79,6 +106,9 @@ backend/
     mastery.py
     models.py
     probes.py
+  evaluation/
+    responses.json
+    run.py
   tests/
 frontend/
   src/

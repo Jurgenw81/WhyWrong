@@ -1,0 +1,381 @@
+{
+  "total": 48,
+  "passed": 28,
+  "accuracy": 0.5833,
+  "per_label": {
+    "ambiguous": {
+      "total": 12,
+      "passed": 12,
+      "accuracy": 1.0
+    },
+    "correct": {
+      "total": 12,
+      "passed": 2,
+      "accuracy": 0.1667
+    },
+    "gradient_misunderstanding": {
+      "total": 12,
+      "passed": 2,
+      "accuracy": 0.1667
+    },
+    "optimizer_confusion": {
+      "total": 12,
+      "passed": 12,
+      "accuracy": 1.0
+    }
+  },
+  "confusion": {
+    "ambiguous": {
+      "optimizer_confusion": 12
+    },
+    "correct": {
+      "correct": 2,
+      "optimizer_confusion": 10
+    },
+    "gradient_misunderstanding": {
+      "gradient_misunderstanding": 2,
+      "optimizer_confusion": 10
+    },
+    "optimizer_confusion": {
+      "optimizer_confusion": 12
+    }
+  },
+  "results": [
+    {
+      "example_id": "correct-01",
+      "expected": "correct",
+      "predicted": "correct",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-02",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-03",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-04",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-05",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-06",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-07",
+      "expected": "correct",
+      "predicted": "correct",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-08",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-09",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-10",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-11",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "correct-12",
+      "expected": "correct",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-01",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-02",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-03",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-04",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-05",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-06",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-07",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-08",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-09",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-10",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-11",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "optimizer-12",
+      "expected": "optimizer_confusion",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-01",
+      "expected": "gradient_misunderstanding",
+      "predicted": "gradient_misunderstanding",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-02",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-03",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-04",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-05",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-06",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-07",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-08",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-09",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-10",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-11",
+      "expected": "gradient_misunderstanding",
+      "predicted": "gradient_misunderstanding",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "gradient-12",
+      "expected": "gradient_misunderstanding",
+      "predicted": "optimizer_confusion",
+      "passed": false,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-01",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-02",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-03",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-04",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-05",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-06",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-07",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-08",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-09",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-10",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-11",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    },
+    {
+      "example_id": "ambiguous-12",
+      "expected": "ambiguous",
+      "predicted": "optimizer_confusion",
+      "passed": true,
+      "source": "deterministic"
+    }
+  ]
+}
