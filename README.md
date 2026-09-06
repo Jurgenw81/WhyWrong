@@ -6,8 +6,9 @@ WhyWrong is an AI learning debugger. It diagnoses the misconception behind a
 student's wrong answer, asks a compact question that separates competing
 hypotheses, teaches the detected gap, and then retries the original concept.
 
-The demo includes four testable neural-network learning loops: backpropagation,
-activation functions, learning rate, and overfitting.
+The demo is a twelve-topic beginner path that explains what a neural network is
+before connecting neurons, layers, forward passes, activations, loss, gradients,
+backpropagation, optimizers, learning rates, batches, data splits, and overfitting.
 
 ## Milestone 1
 
@@ -19,7 +20,8 @@ The diagnostic core currently:
 - updates the hypotheses from the probe response;
 - returns a targeted micro-lesson;
 - updates concept mastery after a retry.
-- lets learners switch among four concepts, each with its own competing
+- lets learners move through twelve concepts, each with plain-language teaching,
+  a concrete example, connections to the rest of the training loop, competing
   misconceptions, diagnostic probe, and targeted repair.
 
 The baseline is deterministic and local. With `OPENAI_API_KEY` configured, the

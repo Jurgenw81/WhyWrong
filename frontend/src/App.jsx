@@ -3,6 +3,7 @@ import { Activity } from "lucide-react";
 import { getConcepts, startSession, submitAnswer, submitProbe } from "./api";
 import KnowledgeMap from "./components/KnowledgeMap";
 import LearningPanel from "./components/LearningPanel";
+import CurriculumRail from "./components/CurriculumRail";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -11,7 +12,9 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [concepts, setConcepts] = useState([]);
-  const [conceptId, setConceptId] = useState("backpropagation");
+  const [conceptId, setConceptId] = useState("neural_networks");
+  const [showLesson, setShowLesson] = useState(true);
+  const [completed, setCompleted] = useState(() => new Set());
 
   async function begin(nextConceptId = conceptId) {
     setLoading(true);
@@ -29,11 +32,12 @@ export default function App() {
 
   useEffect(() => {
     getConcepts().then(setConcepts).catch(() => {});
-    begin("backpropagation");
+    begin("neural_networks");
   }, []);
 
   function chooseConcept(nextConceptId) {
     setConceptId(nextConceptId);
+    setShowLesson(true);
     begin(nextConceptId);
   }
 
@@ -51,6 +55,7 @@ export default function App() {
         state: data.state,
       }));
       setAnswer("");
+      if (data.next_action === "pass") setCompleted((current) => new Set([...current, conceptId]));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -78,6 +83,9 @@ export default function App() {
 
   const phase = session?.phase || "loading";
   const mastery = session?.state?.mastery_probability ?? 0.35;
+  const selectedConcept = concepts.find((item) => item.id === conceptId);
+  const activeIndex = concepts.findIndex((item) => item.id === conceptId);
+  const nextConcept = concepts[activeIndex + 1];
 
   return (
     <div className="app-shell">
@@ -96,20 +104,8 @@ export default function App() {
           <span className="eyebrow">AI LEARNING DEBUGGER</span>
           <p>Don’t just correct mistakes. Understand them.</p>
         </div>
-        <nav className="concept-tabs" aria-label="Choose a neural-network concept">
-          {concepts.map((concept, index) => (
-            <button
-              className={concept.id === conceptId ? "active" : ""}
-              key={concept.id}
-              onClick={() => chooseConcept(concept.id)}
-              disabled={loading}
-            >
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              {concept.name}
-            </button>
-          ))}
-        </nav>
         <div className="workspace">
+          <CurriculumRail concepts={concepts} activeId={conceptId} completed={completed} onChoose={chooseConcept} />
           <KnowledgeMap phase={phase} mastery={mastery} conceptId={conceptId} />
           <LearningPanel
             session={session}
@@ -121,6 +117,11 @@ export default function App() {
             onAnswer={handleAnswer}
             onProbe={handleProbe}
             onRestart={() => begin(conceptId)}
+            concept={selectedConcept}
+            showLesson={showLesson}
+            onStartCheck={() => setShowLesson(false)}
+            nextConcept={nextConcept}
+            onNext={() => nextConcept && chooseConcept(nextConcept.id)}
           />
         </div>
       </main>

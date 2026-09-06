@@ -10,8 +10,16 @@ const defaultNodes = [
 ];
 
 const topicMaps = {
+  neural_networks: ["Examples", "Inputs", "Layers", "Learned weights", "Neural network", "Outputs"],
+  neurons_weights_biases: ["Features", "Inputs", "Multiplication", "Weighted sum", "Neuron", "Bias + activation"],
+  layers_forward_pass: ["Input layer", "Early features", "Hidden layers", "Representations", "Forward pass", "Prediction"],
   activation_functions: ["Inputs", "Weighted sums", "Linear layers", "Nonlinearity", "Activation functions", "Expressive network"],
+  loss_functions: ["Prediction", "Target", "Comparison", "Error signal", "Loss function", "Training objective"],
+  gradients: ["Parameters", "Loss", "Sensitivity", "Local slope", "Gradient", "Update information"],
+  optimizers: ["Loss", "Gradients", "Update rule", "Parameter state", "Optimizer", "New weights"],
   learning_rate: ["Loss", "Gradients", "Update direction", "Step size", "Learning rate", "Convergence"],
+  batches_epochs: ["Dataset", "Examples", "Mini-batch", "Optimizer steps", "Epoch", "Training history"],
+  data_splits: ["All examples", "Training set", "Validation set", "Model choices", "Test set", "Final estimate"],
   overfitting: ["Training data", "Training loss", "Model capacity", "Validation data", "Generalization", "Overfitting"],
 };
 

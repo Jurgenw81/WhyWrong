@@ -57,3 +57,10 @@ an LLM-based free-text classifier is connected.
   learning rate, and overfitting.
 - Added concept-specific misconception hypotheses, separating probes, and micro-lessons.
 - Added an API concept catalog and a responsive topic selector with contextual maps.
+
+## 2026-09-06 — Beginner course pathway
+
+- Expanded the question bank to twelve connected lessons covering the full training loop.
+- Added plain-language explanations, concrete examples, and explicit concept connections.
+- Reworked navigation into a staged beginner curriculum with progress and next-lesson flow.
+- Ensured every topic has its own misconception hypotheses, diagnostic probe, and repair.

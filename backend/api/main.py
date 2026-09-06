@@ -70,6 +70,11 @@ async def list_concepts() -> list[ConceptResponse]:
             name=str(item["name"]),
             question=str(item["question"]),
             prerequisites=[str(value) for value in item.get("prerequisites", [])],
+            stage=str(item.get("stage", "NEURAL NETWORKS")),
+            summary=str(item.get("summary", "")),
+            explanation=str(item.get("explanation", "")),
+            example=str(item.get("example", "")),
+            connection=str(item.get("connection", "")),
         )
         for item in concepts.values()
     ]
@@ -174,7 +179,7 @@ async def analyze_answer(session_id: str, request: AnswerRequest) -> AnalysisRes
         )
 
     session_engine = session.diagnostic_engine or diagnostic_engine
-    use_llm = llm_classifier is not None and session.concept_id == "backpropagation"
+    use_llm = llm_classifier is not None
     if use_llm:
         client_key = request.client.host if request.client else "unknown"
         allowed, retry_after = analysis_limiter.allow(client_key)

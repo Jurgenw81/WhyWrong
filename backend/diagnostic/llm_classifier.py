@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import Literal
-
 from openai import AsyncOpenAI
 from pydantic import BaseModel, Field
 
@@ -15,7 +13,7 @@ from .models import Analysis
 
 
 class MisconceptionAssessment(BaseModel):
-    id: Literal["optimizer_confusion", "gradient_misunderstanding"]
+    id: str = Field(min_length=1, max_length=80)
     probability: float = Field(ge=0, le=1)
     evidence: str = Field(min_length=1, max_length=300)
 
@@ -40,6 +38,21 @@ answer is correct, misconception probabilities should be low. When it is ambiguo
 keep confidence moderate rather than inventing intent."""
 
 
+def instructions_for(engine: object) -> str:
+    diagnostic = getattr(engine, "diagnostic", None)
+    if diagnostic is None:
+        return INSTRUCTIONS
+    options = "\n".join(f"- {item[0]}: {item[1]}" for item in diagnostic.hypotheses)
+    return f"""You diagnose a beginner's conceptual understanding of a neural-network topic.
+
+Score correctness and reasoning quality from 0 to 1. Return exactly these two
+misconception IDs, each with a probability and brief evidence grounded only in the answer:
+{options}
+
+Use only those exact IDs. When the answer is correct, misconception probabilities
+should be low. When it is vague, keep confidence moderate rather than inventing intent."""
+
+
 class OpenAIAnswerClassifier:
     def __init__(
         self,
@@ -61,7 +74,7 @@ class OpenAIAnswerClassifier:
     ) -> Analysis:
         response = await self.client.responses.parse(
             model=self.model,
-            instructions=INSTRUCTIONS,
+            instructions=instructions_for(engine),
             input=answer,
             text_format=StructuredAssessment,
             store=False,
@@ -71,21 +84,14 @@ class OpenAIAnswerClassifier:
             raise ValueError("The model returned no structured assessment")
 
         by_id = {item.id: item for item in assessment.misconceptions}
+        diagnostic = getattr(engine, "diagnostic", None)
+        supported = (
+            [item[0] for item in diagnostic.hypotheses]
+            if diagnostic is not None
+            else [OPTIMIZER_CONFUSION, GRADIENT_MISUNDERSTANDING]
+        )
         probabilities = {
-            OPTIMIZER_CONFUSION: by_id.get(
-                OPTIMIZER_CONFUSION,
-                MisconceptionAssessment(
-                    id=OPTIMIZER_CONFUSION, probability=0, evidence="No evidence found."
-                ),
-            ).probability,
-            GRADIENT_MISUNDERSTANDING: by_id.get(
-                GRADIENT_MISUNDERSTANDING,
-                MisconceptionAssessment(
-                    id=GRADIENT_MISUNDERSTANDING,
-                    probability=0,
-                    evidence="No evidence found.",
-                ),
-            ).probability,
+            key: by_id[key].probability if key in by_id else 0 for key in supported
         }
         evidence = {
             hypothesis_id: item.evidence for hypothesis_id, item in by_id.items()

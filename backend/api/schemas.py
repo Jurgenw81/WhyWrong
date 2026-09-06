@@ -14,6 +14,11 @@ class ConceptResponse(BaseModel):
     name: str
     question: str
     prerequisites: list[str]
+    stage: str
+    summary: str
+    explanation: str
+    example: str
+    connection: str
 
 
 class AnswerRequest(BaseModel):

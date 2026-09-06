@@ -2,6 +2,7 @@ import unittest
 from types import SimpleNamespace
 
 from backend.diagnostic.engine import DiagnosticEngine, OPTIMIZER_CONFUSION
+from backend.diagnostic.concept_engine import engine_for
 from backend.diagnostic.llm_classifier import (
     MisconceptionAssessment,
     OpenAIAnswerClassifier,
@@ -69,6 +70,31 @@ class LlmClassifierTests(unittest.IsolatedAsyncioTestCase):
         classifier = OpenAIAnswerClassifier(client=client, model="test-model")
         analysis = await classifier.analyze("Correct explanation", DiagnosticEngine())
         self.assertEqual(analysis.next_action, NextAction.PASS)
+
+    async def test_uses_topic_specific_misconceptions(self) -> None:
+        assessment = StructuredAssessment(
+            correctness=0.2,
+            reasoning_quality=0.4,
+            misconceptions=[
+                MisconceptionAssessment(
+                    id="loss_updates_weights", probability=0.9, evidence="Says loss updates."
+                ),
+                MisconceptionAssessment(
+                    id="loss_equals_accuracy", probability=0.1, evidence="No accuracy claim."
+                ),
+            ],
+        )
+        responses = FakeResponses(assessment)
+        classifier = OpenAIAnswerClassifier(
+            client=SimpleNamespace(responses=responses), model="test-model"
+        )
+
+        analysis = await classifier.analyze(
+            "The loss changes the weights.", engine_for("loss_functions")
+        )
+
+        self.assertEqual(analysis.hypotheses[0].id, "loss_updates_weights")
+        self.assertIn("loss_updates_weights", responses.arguments["instructions"])
 
 
 if __name__ == "__main__":

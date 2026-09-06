@@ -79,6 +79,97 @@ DIAGNOSTICS = {
 }
 
 
+def _basic_diagnostic(
+    correct_terms, first, second, probe_question, first_lesson, second_lesson
+):
+    first_id, first_label, first_cues = first
+    second_id, second_label, second_cues = second
+    return ConceptDiagnostic(
+        correct_terms=correct_terms,
+        hypotheses=(first, second),
+        probe=Probe(
+            f"{first_id}_check",
+            probe_question,
+            ("Yes", "No", "Not sure"),
+            {
+                first_id: {"Yes": .84, "No": .08, "Not sure": .08},
+                second_id: {"Yes": .12, "No": .76, "Not sure": .12},
+            },
+        ),
+        lessons={first_id: first_lesson, second_id: second_lesson},
+    )
+
+
+DIAGNOSTICS.update(
+    {
+        "neural_networks": _basic_diagnostic(
+            (("input", "output", "weight"), ("layer", "training", "weight")),
+            ("fixed_program", "A neural network follows fixed hand-written rules", ("program", "fixed", "rules")),
+            ("training_stores_answers", "Training stores every answer", ("memorize", "store", "database")),
+            "Does training normally change learned weights inside the network?",
+            "A neural network is not a fixed list of hand-written decisions. Training adjusts numerical weights that shape its input-to-output function.",
+            "Networks can memorize, but their purpose is to learn reusable patterns in weights—not store a lookup table of every answer.",
+        ),
+        "neurons_weights_biases": _basic_diagnostic(
+            (("weight", "bias", "shift"), ("weight", "input", "baseline")),
+            ("weight_is_input", "A weight is the input value", ("input value", "data itself", "feature itself")),
+            ("bias_is_error", "A bias is prediction error", ("error", "mistake", "loss")),
+            "Can changing a weight alter how strongly one input affects a neuron?",
+            "Inputs are data; weights are learned multipliers controlling how strongly those inputs influence the neuron.",
+            "A bias is a learned offset in the neuron's calculation. It is not the model's prediction error or statistical unfairness.",
+        ),
+        "layers_forward_pass": _basic_diagnostic(
+            (("input", "output", "layer"), ("transform", "layer", "prediction")),
+            ("forward_updates_weights", "The forward pass updates weights", ("update", "change weights", "learns")),
+            ("layers_repeat_inputs", "Every layer sees only the raw input", ("raw input", "same input", "repeat")),
+            "Does a normal forward pass change model weights by itself?",
+            "The forward pass calculates a prediction with the current weights. Learning happens only after loss, gradients, and an optimizer update.",
+            "Hidden layers consume representations from earlier layers, letting later layers combine simpler features into richer ones.",
+        ),
+        "loss_functions": _basic_diagnostic(
+            (("compare", "prediction", "target"), ("error", "objective", "update")),
+            ("loss_updates_weights", "The loss function updates weights", ("update", "changes weights", "trains")),
+            ("loss_equals_accuracy", "Loss and accuracy are the same metric", ("accuracy", "percent correct", "same")),
+            "After loss is calculated, have the weights necessarily changed?",
+            "Loss measures the objective. Backpropagation and the optimizer are separate steps that turn that signal into parameter changes.",
+            "Accuracy counts correct decisions; loss measures graded prediction quality and supplies a differentiable training signal.",
+        ),
+        "gradients": _basic_diagnostic(
+            (("slope", "loss", "parameter"), ("direction", "sensitivity", "loss")),
+            ("gradient_is_update", "A gradient is the parameter update", ("update", "new weight", "amount changes")),
+            ("gradient_is_error", "A gradient is the prediction error", ("error value", "wrong prediction", "loss itself")),
+            "Can an optimizer scale or transform a gradient before updating a weight?",
+            "A gradient is local slope information. The optimizer converts it into an update using the learning rate and its update rule.",
+            "Loss measures prediction error; a gradient measures how that loss changes with respect to a particular parameter.",
+        ),
+        "optimizers": _basic_diagnostic(
+            (("gradient", "update", "weight"), ("parameter", "learning rate", "change")),
+            ("optimizer_computes_loss", "The optimizer computes the loss", ("computes loss", "compares target", "error")),
+            ("optimizer_is_backprop", "The optimizer and backpropagation are the same step", ("same", "backprop", "backward")),
+            "Can optimizer.step() change weights after gradients have already been computed?",
+            "The forward computation and loss function produce the loss. The optimizer's job is to apply parameter updates.",
+            "Backpropagation computes gradients; the optimizer consumes them and changes parameters. They are connected but separate.",
+        ),
+        "batches_epochs": _basic_diagnostic(
+            (("batch", "epoch", "update"), ("whole dataset", "batch", "pass")),
+            ("batch_is_epoch", "A batch and an epoch are the same", ("same", "entire dataset", "one batch")),
+            ("epoch_means_new_data", "Every epoch uses brand-new data", ("new data", "new examples", "different dataset")),
+            "If a dataset contains ten batches, is one batch equal to one epoch?",
+            "A batch is one subset used for a training step; an epoch covers the complete training set, usually across many batches.",
+            "Epochs normally revisit the training set in a new order. Repetition does not automatically create new examples.",
+        ),
+        "data_splits": _basic_diagnostic(
+            (("training", "validation", "test"), ("tune", "final", "unseen")),
+            ("all_data_for_training", "All available data should train the weights", ("all data", "train everything", "waste data")),
+            ("validation_equals_test", "Validation and test sets have the same role", ("same", "both evaluate", "no difference")),
+            "Should test examples influence repeated model-selection decisions?",
+            "Holding data back is what lets us measure behavior beyond the examples that directly shaped the model.",
+            "Validation guides choices during development; the test set is reserved for a final, less-biased estimate.",
+        ),
+    }
+)
+
+
 class ConceptDiagnosticEngine:
     def __init__(self, concept_id: str, diagnostic: ConceptDiagnostic) -> None:
         self.concept_id = concept_id
@@ -101,6 +192,19 @@ class ConceptDiagnosticEngine:
             for item in sorted(scores, key=lambda value: value[2], reverse=True)
         )
         return Analysis(.3, .5, hypotheses, NextAction.PROBE, self.diagnostic.probe)
+
+    def from_classification(self, *, correctness, reasoning_quality, probabilities, evidence=None, source):
+        if correctness >= .82:
+            return Analysis(correctness, reasoning_quality, (), NextAction.PASS, source=source)
+        labels = {item[0]: item[1] for item in self.diagnostic.hypotheses}
+        cleaned = {key: max(0.0, probabilities.get(key, 0.0)) for key in labels}
+        total = sum(cleaned.values())
+        cleaned = ({key: value / total for key, value in cleaned.items()} if total else {key: 1 / len(labels) for key in labels})
+        hypotheses = tuple(
+            Hypothesis(key, labels[key], round(value, 4), (evidence or {}).get(key, "This interpretation remains plausible."))
+            for key, value in sorted(cleaned.items(), key=lambda item: item[1], reverse=True)
+        )
+        return Analysis(correctness, reasoning_quality, hypotheses, NextAction.PROBE, self.diagnostic.probe, source)
 
     def apply_probe(self, analysis: Analysis, answer: str):
         if analysis.probe is None:

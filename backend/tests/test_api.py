@@ -32,11 +32,29 @@ class ApiTests(unittest.IsolatedAsyncioTestCase):
         response = await self.client.get("/api/concepts")
         self.assertEqual(response.status_code, 200)
         body = response.json()
-        self.assertEqual(len(body), 4)
-        self.assertEqual(
-            {item["id"] for item in body},
-            {"backpropagation", "activation_functions", "learning_rate", "overfitting"},
-        )
+        self.assertEqual(len(body), 12)
+        self.assertEqual(body[0]["id"], "neural_networks")
+        self.assertEqual(body[-1]["id"], "overfitting")
+        self.assertTrue(all(item["explanation"] for item in body))
+        self.assertTrue(all(item["example"] for item in body))
+
+    async def test_every_curriculum_topic_has_a_topic_specific_diagnostic(self) -> None:
+        concepts = (await self.client.get("/api/concepts")).json()
+        for concept in concepts:
+            with self.subTest(concept=concept["id"]):
+                response = await self.client.post(
+                    "/api/sessions", json={"concept_id": concept["id"]}
+                )
+                session_id = response.json()["session_id"]
+                response = await self.client.post(
+                    f"/api/sessions/{session_id}/answer",
+                    json={"answer": "I am not sure yet."},
+                )
+                body = response.json()
+                self.assertEqual(body["next_action"], "probe")
+                self.assertEqual(len(body["hypotheses"]), 2)
+                if concept["id"] != "backpropagation":
+                    self.assertNotEqual(body["hypotheses"][0]["id"], "optimizer_confusion")
 
     async def test_additional_concept_has_its_own_diagnostic_loop(self) -> None:
         response = await self.client.post(
