@@ -70,3 +70,10 @@ an LLM-based free-text classifier is connected.
 - Removed hardcoded prerequisite mastery claims from the knowledge map.
 - Replaced the arbitrary initial percentage with explicit assessment status.
 - Limited demonstrated and misconception states to evidence produced in the current session.
+
+## 2026-09-06 — Course layout repair
+
+- Removed the collision-prone floating concept graph from the main learning surface.
+- Rebuilt the page as a stable two-column curriculum and lesson layout.
+- Added explicit lesson numbering and a course progress indicator.
+- Increased reading width and added narrow-screen stacking without overlays.

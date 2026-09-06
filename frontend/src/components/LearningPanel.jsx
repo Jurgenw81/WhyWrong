@@ -38,13 +38,18 @@ export default function LearningPanel({
   onStartCheck,
   nextConcept,
   onNext,
+  lessonNumber,
+  lessonTotal,
 }) {
   const phase = session?.phase || "loading";
 
   return (
     <section className="learning-panel">
-      <div className="concept-kicker">
-        <BrainCircuit size={17} /> Neural Networks · {session?.concept_name || "Concept check"}
+      <div className="lesson-progress">
+        <div className="concept-kicker">
+          <BrainCircuit size={17} /> {concept?.stage || "NEURAL NETWORKS"} · LESSON {lessonNumber || 1} OF {lessonTotal || 1}
+        </div>
+        <div className="lesson-progress-track"><i style={{ width: `${((lessonNumber || 1) / (lessonTotal || 1)) * 100}%` }} /></div>
       </div>
 
       {phase === "loading" && (
